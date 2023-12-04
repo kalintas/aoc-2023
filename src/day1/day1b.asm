@@ -43,12 +43,12 @@ is_calibration_digit:
     ld a, b
 
     call is_digit
-    jp nz, is_calibration_digit_not_digit
+    jp nz, is_calibration_digit__not_digit
     
     ld a, c
     ret
 
-    is_calibration_digit_not_digit:
+    is_calibration_digit__not_digit:
 
     ; Is not a real digit.
     ; Check for string digits.("one", "two")
@@ -58,7 +58,7 @@ is_calibration_digit:
     ld b, $0 ; current string index
     ld de, DigitStrings ; pointer to current string
 
-    is_calibration_digit_compare_loop:
+    is_calibration_digit__compare_loop:
 
     push hl
     ld h, d
@@ -76,7 +76,7 @@ is_calibration_digit:
     pop de
     pop bc
     pop hl
-    jp z, is_calibration_digit_compare_finished
+    jp z, is_calibration_digit__compare_finished
 
     ; Increment current pointer
     ld a, e
@@ -90,20 +90,20 @@ is_calibration_digit:
     inc b
     ld a, $a
     cp b
-    jp nz, is_calibration_digit_compare_loop
+    jp nz, is_calibration_digit__compare_loop
 
-    is_calibration_digit_compare_finished:
+    is_calibration_digit__compare_finished:
     ld a, b; b -> digit 
     
     pop de
     
     cp $a
-    jp c, is_calibration_digit_carry
+    jp c, is_calibration_digit__carry
 
     cp $0 ; Z = 0 (Not a digit)
     ret
 
-    is_calibration_digit_carry:
+    is_calibration_digit__carry:
 
     cp a; Z = 1 (Is a digit)
     ret
