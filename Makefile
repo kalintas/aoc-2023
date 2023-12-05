@@ -9,4 +9,4 @@ all:
 		rgblink -o ./build/$(basename $(notdir $(file))).gb ./build/$(basename $(notdir $(file))).o;\
 		rgbfix -m 0x1 -n 0x1 -v -p 0xFF -t $(basename $(notdir $(file))) ./build/$(basename $(notdir $(file))).gb;)
 
-	../gameboy/target/release/gameboy ./build/day1b.gb
+	../gameboy/target/release/gameboy ./build/day2b.gb

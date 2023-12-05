@@ -66,7 +66,7 @@ print_string:
 
     jp print_string
 
-; Prints the 16 unsigned bit integer. 
+; Prints the 16 bit unsigned integer parameter. 
 ; DE -> integer to be printed. B -> X location(right adjusted: x + length), C -> Y location
 print_u16:
 
@@ -76,12 +76,13 @@ print_u16:
     ld e, c
     pop bc
     
-    add $30 ; convert to char
+    add $30 ; convert remainder to char
 
     push de
     call print_character
     pop de
-    dec b
+    
+    dec b ; Shift cursor
 
     ; check de == 0
     ld a, e
@@ -91,6 +92,46 @@ print_u16:
     ld a, d
     cp $0
     jp nz, print_u16
+
+    ret
+
+; Prints the 32 bit unsigned integer parameter.
+; BC -> Upper part of the integer to be printed.
+; DE -> Lower part of the integer to be printed.
+; H -> X location(right adjusted: x + length), L -> Y location
+print_u32:
+
+    push hl
+    call divide_u32_by_10
+    pop hl
+
+    add $30 ; convert remainder to char
+    
+    push de
+    push bc
+    ld b, h
+    ld c, l
+    call print_character
+    pop bc
+    pop de
+
+    dec h ; Shift cursor
+
+    ld a, e
+    cp $0
+    jp nz, print_u32
+
+    ld a, d
+    cp $0
+    jp nz, print_u32
+
+    ld a, c
+    cp $0
+    jp nz, print_u32
+
+    ld a, b
+    cp $0
+    jp nz, print_u32
 
     ret
 
