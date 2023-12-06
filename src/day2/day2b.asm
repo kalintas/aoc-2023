@@ -4,12 +4,15 @@ SECTION "ROM_CONSTANTS", ROM0
 
 RomName:
     db "DAY 2B", 0
-InputText: INCBIN "./src/day2/input.txt"
+InputText: INCBIN "./src/day2/input0.txt"
 InputTextEnd:
+
+increment_address:
+    inc hl
+    ret
 
 INCLUDE "./src/common/print.asm"
 INCLUDE "./src/common/util.asm"
-
 
 ; Puts the maximum of A and C to A
 ; Effects: A -> max(A, C)

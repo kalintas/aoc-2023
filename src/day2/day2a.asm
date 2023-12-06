@@ -4,8 +4,12 @@ SECTION "ROM_CONSTANTS", ROM0
 
 RomName:
     db "DAY 2A", 0
-InputText: INCBIN "./src/day2/input.txt"
+InputText: INCBIN "./src/day2/input0.txt"
 InputTextEnd:
+
+increment_address:
+    inc hl
+    ret
 
 INCLUDE "./src/common/print.asm"
 INCLUDE "./src/common/util.asm"
@@ -105,6 +109,10 @@ is_set_possible:
     ld a, b
     cp BLUE_CUBE_COUNT + 1
     jp nc, is_set_possible__set_impossible
+
+    add e
+    add c
+    jp z, is_set_possible__set_impossible ; There was no cube. Empty line.
 
     ; Set is possible. Z = 1
     cp a

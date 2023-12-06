@@ -9,6 +9,7 @@ SECTION "INPUT_TEXT1", ROMX
 InputText1: INCBIN "./src/day1/input1.txt"
 InputText1End:
 
+
 INCLUDE "./src/common/common.asm"
 
 SECTION "ROM_CONSTANTS", ROM0
@@ -27,10 +28,10 @@ DigitStrings:
     db $5, "eight"
     db $4, "nine"
 
+INCLUDE "./src/day1/common.asm"
+
 INCLUDE "./src/common/print.asm"
 INCLUDE "./src/common/util.asm"
-
-INCLUDE "./src/day1/common.asm"
 
 ; Parameters: A -> digit, HL -> address of the digit
 ; Effects: A -> digit, Z -> digit, NZ -> not digit
@@ -69,6 +70,7 @@ is_calibration_digit:
 
     inc de
 
+    call push_rom_bank
     push hl
     push bc
     push de
@@ -76,6 +78,7 @@ is_calibration_digit:
     pop de
     pop bc
     pop hl
+    call pop_rom_bank
     jp z, is_calibration_digit__compare_finished
 
     ; Increment current pointer

@@ -9,5 +9,6 @@ https://rgbds.gbdev.io/install/
 ```
 git clone https://github.com/kalintas/aoc-2023
 cd aoc-2023
-make
+mkdir build
+make all
 ```

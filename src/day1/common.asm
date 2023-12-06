@@ -1,3 +1,38 @@
+
+increment_address:
+    inc hl
+    
+    push af
+    push bc
+    ; BC = InputText0End
+    push hl
+    ld hl, InputText0End
+    ld b, h
+    ld c, l
+    pop hl
+
+    ; Change rom bank if HL >= BC
+    ld a, h
+    cp b
+    jp c, increment_address__end
+
+    ld a, l
+    cp c
+    jp c, increment_address__end
+
+    ; Change rom bank
+    ld hl,$2000
+    ld [hl],$2
+    ld hl, CurrentRomBank
+    ld [hl], $2
+    ld hl, InputText1
+
+    increment_address__end:
+    pop bc
+    pop af
+    ret
+
+
 ; Returns calibration count in A.
 get_line_calibration:
 
@@ -16,7 +51,8 @@ get_line_calibration:
     call is_calibration_digit
     pop bc
     
-    inc hl ; increment address after calling is_calibration_digit
+    call increment_address ; increment address after calling is_calibration_digit
+
     push af
 
     jp nz, get_line_calibration__digit_not_found
@@ -44,8 +80,8 @@ get_line_calibration:
     jp get_line_calibration__loop
 
     get_line_calibration__finished:
-    inc hl
-
+    call increment_address
+    
     ; if c == 0 { d * 11 } else { d * 10 + e } 
     ld a, 0
     cp c
@@ -65,61 +101,53 @@ get_line_calibration:
     ret
 
 get_calibration:
-    ld bc, $0; line counter
 
-    get_calibration__loop:
+    ld de, $0; result
 
-    push bc
+    get_calibration_loop:
 
     push de
     call get_line_calibration
     pop de
 
+    add e
+    ld e, a
+    ld a, d
+    adc $0
+    ld d, a
+
+    ; Check if calibration is finished.
+    ld a, [CurrentRomBank]
+    cp $2
+    jp nz, get_calibration_loop
+
+    ; BC = InputText1End
     push hl
-
-    ld h, d
-    ld l, e
-
-    ld b, $0
-    ld c, a
-
-    add hl, bc
-    
-    ld d, h
-    ld e, l
+    ld hl, InputText1End
+    ld b, h
+    ld c, l
     pop hl
 
-    pop bc
+    ; Stop execution if HL >= BC
 
-    inc bc
+    ld a, h
+    cp b
+    jp c, get_calibration_loop
 
-    ld a, b
-    cp $1
+    ld a, l
+    cp c
+    jp c, get_calibration_loop
 
-    jp nz, get_calibration__loop
-
-    ld a, c
-    cp $f4
-
-    jp nz, get_calibration__loop
     ret
 
 main:
 
-    ld de, $0; result
-
     ; Get calibration in the first part of the string
     ld hl,$2000
-    ld [hl],$2
+    ld [hl],$1
     ld hl, InputText0
     call get_calibration
 
-    ; Get calibration in the second part of the string
-    ld hl,$2000
-    ld [hl],$1
-    ld hl, InputText1
-    call get_calibration
-    
     ld hl, RomName
     ld bc, $0702
     push de

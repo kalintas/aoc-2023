@@ -1,5 +1,12 @@
 INCLUDE "./src/common/hardware.inc"
 
+SECTION "Rom Variables", WRAM0
+Tilemap: ds $240
+TilemapEnd:
+CurrentRomBank: ds $1
+RomBankSP: ds $1
+RomBankStack: ds $100
+
 SECTION "Header", ROM0[$100]
 
 	jp entry_point
@@ -9,6 +16,9 @@ entry_point:
 	; Shut down audio circuitry
 	ld a, 0
 	ld [rNR52], a
+
+	ld [RomBankSP], a
+	ld [CurrentRomBank], a
 
 	call main
 
@@ -63,6 +73,3 @@ SECTION "Tile data", ROM0
 
 Tiles: INCBIN "./assets/text-font.2bpp"
 TilesEnd:
-
-DEF Tilemap EQU $C000
-DEF TilemapEnd EQU $C240

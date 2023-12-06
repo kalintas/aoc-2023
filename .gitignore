@@ -1,2 +1,6 @@
 imgui.ini
 build
+assets/*.2bpp
+assets/inputs/**
+src/day**/input*
+.env
