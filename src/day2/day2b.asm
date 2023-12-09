@@ -7,10 +7,6 @@ RomName:
 InputText: INCBIN "./src/day2/input0.txt"
 InputTextEnd:
 
-increment_address:
-    inc hl
-    ret
-
 INCLUDE "./src/common/print.asm"
 INCLUDE "./src/common/util.asm"
 

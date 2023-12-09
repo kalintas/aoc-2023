@@ -6,6 +6,9 @@ TilemapEnd:
 CurrentRomBank: ds $1
 RomBankSP: ds $1
 RomBankStack: ds $100
+WorkStackSP: ds $1
+WorkStack: ds $200
+WorkRam: ds $100
 
 SECTION "Header", ROM0[$100]
 
@@ -19,6 +22,7 @@ entry_point:
 
 	ld [RomBankSP], a
 	ld [CurrentRomBank], a
+	ld [WorkStackSP], a
 
 	call main
 

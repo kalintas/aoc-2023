@@ -1,5 +1,6 @@
 
 INCLUDE "./src/common/arithmetic.asm"
+INCLUDE "./src/common/memory.asm"
 
 ; Checks if given 8 bit value is a ascii digit or not.
 ; Must be in range of [$30, $39]
@@ -96,6 +97,85 @@ pop_rom_bank:
 
     ret
 
+; Pushes BC to wram stack.
+push_u16:
+
+    push hl 
+    push af 
+    
+    ld a, [WorkStackSP]
+
+    add a, $2
+    ld hl, WorkStackSP
+    ld [hl], a
+    sub $2
+
+    ld hl, WorkStack
+
+    ; HL += a
+    add l
+    ld l, a
+    ld a, h
+    adc $0
+    ld h, a
+
+    ld a, c
+    ld [hli], a
+    ld a, b
+    ld [hl], a
+
+    pop af
+    pop hl
+
+    ret
+
+; Poppes BC from the wram stack.
+; Mutates: BC
+pop_u16:
+
+    push hl
+    push af 
+
+    ld a, [WorkStackSP]
+
+    sub $2
+    ld hl, WorkStackSP
+    ld [hl], a
+
+    ld hl, WorkStack
+
+    ; HL += a
+    add l
+    ld l, a
+    ld a, h
+    adc $0
+    ld h, a
+
+    ld a, [hli]
+    ld c, a
+    ld a, [hl]
+    ld b, a
+
+    pop af
+    pop hl
+
+    ret
+
+; Returns whether the work stack is empty.
+; Z -> empty, NZ -> not empty
+; Mutates: AF
+is_stack_empty:
+
+    ld a, [WorkStackSP]
+    cp $0
+    ret
+
+; A -> stack length
+get_stack_length:
+    ld a, [WorkStackSP]
+    sra a
+    ret
+
 ; Does a memory compare in given address.
 ; Parameter: HL (In rom) -> lhs address, DE(Not in rom) -> rhs address, C -> length in bytes
 ; Effects: Z -> equal, NZ -> not equal
@@ -161,6 +241,7 @@ advance_until:
 ;    HL (In rom) -> address right after the integer, 
 ;    BC -> integer representation of the given string.
 ;    E -> character count of the string.
+;    Z -> a valid integer, NZ -> not a integer
 ; Mutates: BC, DE, AF
 stoi_u16:
 
@@ -171,7 +252,7 @@ stoi_u16:
 
     ld a, [hl]
     call is_digit
-    ret nz
+    jp nz, stoi_u16__loop_end
 
     inc e
 
@@ -199,6 +280,18 @@ stoi_u16:
     ld a, b
     adc $0
     ld b, a  
-
     jp stoi_u16__loop
+    stoi_u16__loop_end:
+
+    ld a, e
+    cp $0;
+    jp z, stoi_u16__not_a_number
+    ; Z = 1
+    cp a
+    ret
+    stoi_u16__not_a_number:
+    ; Z = 0
+    ld a, $1
+    add $0
+    ret
 

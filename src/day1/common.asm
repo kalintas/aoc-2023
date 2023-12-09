@@ -1,38 +1,4 @@
 
-increment_address:
-    inc hl
-    
-    push af
-    push bc
-    ; BC = InputText0End
-    push hl
-    ld hl, InputText0End
-    ld b, h
-    ld c, l
-    pop hl
-
-    ; Change rom bank if HL >= BC
-    ld a, h
-    cp b
-    jp c, increment_address__end
-
-    ld a, l
-    cp c
-    jp c, increment_address__end
-
-    ; Change rom bank
-    ld hl,$2000
-    ld [hl],$2
-    ld hl, CurrentRomBank
-    ld [hl], $2
-    ld hl, InputText1
-
-    increment_address__end:
-    pop bc
-    pop af
-    ret
-
-
 ; Returns calibration count in A.
 get_line_calibration:
 

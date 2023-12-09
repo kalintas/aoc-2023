@@ -21,7 +21,6 @@ INCLUDE "./src/common/util.asm"
 
 INCLUDE "./src/day1/common.asm"
 
-
 ; Parameters: A -> digit, HL -> address of the digit
 ; Effects: A -> digit, Z -> digit, NZ -> not digit
 is_calibration_digit:
