@@ -170,11 +170,64 @@ is_stack_empty:
     cp $0
     ret
 
+; Clears the stack.
+clear_stack:
+    push af
+    ld a, $0
+    ld [WorkStackSP], a
+    pop af
+    ret
+
 ; A -> stack length
 get_stack_length:
     ld a, [WorkStackSP]
     sra a
     ret
+
+; Searches the stack for given value.
+; Parameter: BC -> Value to be searched in stack.
+; Effects: Z -> Element exists in stack, NZ -> No such element in stack.
+; Mutates: AF
+stack_contains:
+
+    push hl
+    push de
+    
+    ld hl, WorkStack
+    ld d, $0
+
+    stack_contains__loop:
+
+    ld a, [WorkStackSP]
+    cp d
+    jp nz, stack_contains__loop_not_finished
+    ; Z = 0
+    ld a, $0
+    add $1
+    jp stack_contains__loop_end
+    stack_contains__loop_not_finished:
+
+    inc d
+    inc d
+
+    ld a, [hli]
+    cp c
+    jp z, stack_contains__loop_continue
+    inc hl
+    jp stack_contains__loop
+    stack_contains__loop_continue:
+
+    ld a, [hli]
+    cp b
+    jp nz, stack_contains__loop
+
+    stack_contains__loop_end:
+
+    pop de
+    pop hl
+
+    ret
+
 
 ; Does a memory compare in given address.
 ; Parameter: HL (In rom) -> lhs address, DE(Not in rom) -> rhs address, C -> length in bytes

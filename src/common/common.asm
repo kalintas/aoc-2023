@@ -9,6 +9,7 @@ RomBankStack: ds $100
 WorkStackSP: ds $1
 WorkStack: ds $200
 WorkRam: ds $100
+WorkRamEnd:
 
 SECTION "Header", ROM0[$100]
 
