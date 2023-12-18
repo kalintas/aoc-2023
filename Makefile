@@ -16,7 +16,7 @@ generate_assets:
 
 	$(foreach file, $(wildcard ./src/day*),\
 	day_count=$$(basename ${file} | sed 's/day//');\
-	curl -o ./assets/inputs/$${day_count}.txt "https://adventofcode.com/2023/day/$${day_count}/input" --cookie "session=${SESSION}";\
+	curl -A "github.com/kalintas/aoc-2023 by keremkalinntas@gmail.com" -o ./assets/inputs/$${day_count}.txt "https://adventofcode.com/2023/day/$${day_count}/input" --cookie "session=${SESSION}";\
 	split -a 1 -x -b 16K ./assets/inputs/$${day_count}.txt ./src/day$${day_count}/input --additional-suffix=.txt;)
 
 clean:
