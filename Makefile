@@ -14,6 +14,7 @@ generate_assets:
 # Iterate all days and fetch required inputs.
 # A rom bank is at most 16KB so split the inputs.
 
+	mkdir assets/inputs
 	$(foreach file, $(wildcard ./src/day*),\
 	day_count=$$(basename ${file} | sed 's/day//');\
 	curl -A "github.com/kalintas/aoc-2023 by keremkalinntas@gmail.com" -o ./assets/inputs/$${day_count}.txt "https://adventofcode.com/2023/day/$${day_count}/input" --cookie "session=${SESSION}";\
@@ -26,6 +27,7 @@ clean:
 	rm -rf ./build/*
 
 build:
+	mkdir build |\
 	$(foreach file, $(wildcard ./src/*/day*),\
 	rgbasm -L -o ./build/$(basename $(notdir $(file))).o $(file);\
 	rgblink -o ./build/$(basename $(notdir $(file))).gb ./build/$(basename $(notdir $(file))).o;\

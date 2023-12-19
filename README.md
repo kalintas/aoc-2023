@@ -9,6 +9,6 @@ https://rgbds.gbdev.io/install/
 ```
 git clone https://github.com/kalintas/aoc-2023
 cd aoc-2023
-mkdir build
+echo "export SESSION=<YOUR SESSION>" > .env
 make all
 ```
